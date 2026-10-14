@@ -24,13 +24,43 @@ const io = new Server(server,{
 
 
 io.on('connection',(socket)=>{
-    console.log('user connected',socket.id)
+    
+    socket.on('roomId',(data)=>{
+        socket.join(data)
+    })
 
+
+    socket.on('oldemessage',async(roomId)=>{
+        try {
+            const oldMessage = await msgModel.find({roomId})
+            io.to(roomId).emit('getOldMessage',oldMessage)
+        } catch (error) {
+              socket.emit('messageError', {
+                message: 'Failed to send message'
+            });
+        }
+
+    })
+
+    socket.on('sendMessage',async(data)=>{
+       try {
+         const newMessage = await msgModel.create(
+         {
+               roomId:data.roomId,
+            senderId:data.senderId,
+            reciverId:data.reciverId,
+            message:data.message
+         })
+         io.to(roomId).emit('recivemessage',newMessage)
+       } catch (error) {
+          socket.emit('messageError', {
+                message: 'Failed to send message'
+            });
+       }
+    })
         
 
 })
-
-
 
 app.get('/',(req,res)=>{
     res.send('hellwo')
