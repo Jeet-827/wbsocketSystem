@@ -2,18 +2,25 @@ import express from 'express'
 import {createServer} from 'node:http'
 import { Server } from 'socket.io'
 import dotenv from 'dotenv'
+import cors from 'cors'
 import { connectDb } from './config/Mongodb.config.js'
 import cookieParser from 'cookie-parser'
 import AuthRouter from './routes/Auth.route.js'
 import msgModel from './model/Msg.model.js'
+import searchRoute from './routes/Search.route.js'
 const app = express()
 const server = createServer(app)
 dotenv.config()
 connectDb()
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    credentials: true
+}))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 app.use('/api/v1/auth',AuthRouter)
+app.use('/api/v1/user',searchRoute)
 
 const io = new Server(server,{
     cors:{

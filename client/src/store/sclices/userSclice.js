@@ -4,6 +4,7 @@ const initialState = {
   user: [],
   roomId: "",
   resiverId: "",
+  accessToken:"",
 };
 
 const userSlice = createSlice({
@@ -19,6 +20,9 @@ const userSlice = createSlice({
 
     setResiverId: (state, action) => {
       state.resiverId = action.payload;
+    },
+    setAccessToken:(state,action)=>{
+      state.accessToken = action.payload
     },
 
     clearChat: (state) => {
@@ -36,6 +40,7 @@ export const {
   setResiverId,
   clearChat,
   resetUserState,
+  setAccessToken
 } = userSlice.actions;
 
 export default userSlice.reducer;
